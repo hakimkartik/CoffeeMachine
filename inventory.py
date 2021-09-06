@@ -1,21 +1,55 @@
+import heapq
+
+
 class Inventory:
     ingredient_vs_quantity = dict()
 
     def __init__(self, all_ingredients):
+        self.ingredient_vs_quantity_heap = list()
         if isinstance(all_ingredients, dict):
             self.ingredient_vs_quantity = all_ingredients
+            self.__update_ingredients_heap()
 
     def clear_inventory(self):
         self.ingredient_vs_quantity = None
 
+    def __update_ingredients_heap(self):
+        if not self.__is_inventory_initialized():
+            print("Initialize inventory ... ")
+            return False
+
+        for ingredient in self.ingredient_vs_quantity:
+            quantity = self.ingredient_vs_quantity[ingredient]
+            heapq.heappush(self.ingredient_vs_quantity_heap, (quantity, ingredient))
+
     def add_ingredient_to_inventory(self, name, quantity):
         if quantity >= 0:
             self.ingredient_vs_quantity[name] = quantity
+            heapq.heappush(self.ingredient_vs_quantity_heap, (quantity, name))
+
+    def get_low_running_ingredients(self, n=None):
+        if not self.__is_inventory_initialized():
+            print("Initialize inventory ... ")
+            return False
+
+        if n and isinstance(n, int):
+            return heapq.nsmallest(n, self.ingredient_vs_quantity_heap)
+        else:
+            return list(self.ingredient_vs_quantity_heap)
+
+    def refill_ingredients_in_inventory(self, name, quantity):
+        if not self.__is_inventory_initialized():
+            print("Initialize inventory ... ")
+            return False
+
+        if quantity >= 0:
+            self.ingredient_vs_quantity[name] += quantity
+            self.__update_ingredients_heap()
 
     def get_quantity_in_inventory(self, ingredient_name):
         return self.ingredient_vs_quantity.get(ingredient_name, -1)
 
-    def is_inventory_initialized(self):
+    def __is_inventory_initialized(self):
         if bool(self.ingredient_vs_quantity) and len(self.ingredient_vs_quantity) >= 1:
             return True
         else:
@@ -27,7 +61,7 @@ class Inventory:
         based on that update inventory if all necessary quantity is present
 
         """
-        if not self.is_inventory_initialized():
+        if not self.__is_inventory_initialized():
             print("Initialize inventory ... ")
             return False
 
@@ -65,6 +99,7 @@ class Inventory:
                 bev_quantity = remove_quantities_from_inventory[bev_name]
                 self.ingredient_vs_quantity[bev_name] -= bev_quantity
 
+            self.__update_ingredients_heap()
             print("{} is prepared".format(beverage_name))
 
         return status

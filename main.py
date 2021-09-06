@@ -1,6 +1,7 @@
 import sys
 import os
 import json
+import logging
 from coffee_machine import CoffeeMachine
 
 
@@ -11,8 +12,10 @@ def file_sanity_check():
         if os.path.exists(file_path):
             with open(file_path) as file_ptr:
                 file_data = json.load(file_ptr)
+            logging.info('Loaded file : {}'.format(file_path))
         else:
             print("{} not found".format(file_path))
+            logging.error('File : {}, not found'.format(file_path))
 
     return file_data
 
@@ -27,10 +30,14 @@ def file_input():
 
         coffee_machines = CoffeeMachine(num_of_machine)
         coffee_machines.initialize_inventory(total_ingredients)
-
+        logging.info("Initiated {} coffee machines".format(total_ingredients))
         for bvg_name in list_of_beverages:
             bvg_ingredients_data = machine_data['beverages'][bvg_name]
-            coffee_machines.request_beverage(bvg_name, bvg_ingredients_data)
+            was_beverage_made = coffee_machines.request_beverage(bvg_name, bvg_ingredients_data)
+            if was_beverage_made:
+                logging.info("{} was prepared successfully".format(bvg_name))
+            else:
+                logging.warning("{} was NOT prepared".format(bvg_name))
 
 
 def main():
