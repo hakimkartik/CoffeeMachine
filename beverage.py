@@ -1,17 +1,10 @@
 class Beverage:
     def __init__(self, beverage_name, all_ingredients):
         self.beverage_name = beverage_name
-
-        if isinstance(all_ingredients, dict):
-            self.ingredients = dict()
-            self.ingredients["hot_water"] = all_ingredients.get("hot_water")
-            self.ingredients["hot_milk"] = all_ingredients.get("hot_milk")
-            self.ingredients["ginger_syrup"] = all_ingredients.get("ginger_syrup")
-            self.ingredients["sugar_syrup"] = all_ingredients.get("sugar_syrup")
-            self.ingredients["tea_leaves_syrup"] = all_ingredients.get("tea_leaves_syrup")
-            self.ingredients["green_mixture"] = all_ingredients.get("green_mixture")
-        else:
-            print("Received ingredients are not in dict format")
+        self.ingredients = dict()
+        for ingredient_name in all_ingredients:
+            ingredient_quantity = all_ingredients[ingredient_name]
+            self.ingredients[ingredient_name] = ingredient_quantity
 
     def add_ingredient(self, name, quantity):
         if quantity >= 0:

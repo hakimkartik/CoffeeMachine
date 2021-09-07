@@ -20,13 +20,8 @@ def file_sanity_check():
     return file_data
 
 
-def file_input():
-    file_data = file_sanity_check()
-    if file_data:
-        machine_data = file_data["machine"]
-        num_of_machine = machine_data['outlets']['count_n']
-        total_ingredients = machine_data['total_items_quantity']
-        list_of_beverages = machine_data['beverages']
+def process_beverage_requests(num_of_machine, total_ingredients, list_of_beverages, machine_data):
+    try:
 
         coffee_machines = CoffeeMachine(num_of_machine)
         coffee_machines.initialize_inventory(total_ingredients)
@@ -38,6 +33,20 @@ def file_input():
                 logging.info("{} was prepared successfully".format(bvg_name))
             else:
                 logging.warning("{} was NOT prepared".format(bvg_name))
+
+    except Exception as error1:
+        print("Exception occurred while preparing beverages")
+        print(error1)
+
+
+def file_input():
+    file_data = file_sanity_check()
+    if file_data:
+        machine_data = file_data["machine"]
+        num_of_machine = machine_data['outlets']['count_n']
+        total_ingredients = machine_data['total_items_quantity']
+        list_of_beverages = machine_data['beverages']
+        process_beverage_requests(num_of_machine, total_ingredients, list_of_beverages, machine_data)
 
 
 def main():

@@ -2,6 +2,10 @@ from inventory import Inventory
 from beverage import Beverage
 
 
+class CoffeeMachineException(Exception):
+    pass
+
+
 class CoffeeMachine:
     # request_q = list() # can be used to queue up pending reuqests
 
@@ -28,10 +32,11 @@ class CoffeeMachine:
         and if its ingredients are present in necessary quantity
         """
         was_beverage_made = False
-        if isinstance(bvg_ingredients_data, dict) and self.machine_in_use <= self.total_num_of_machines:
+        if self.machine_in_use <= self.total_num_of_machines:
             self.machine_in_use += 1
             was_beverage_made = self.make_beverage(bvg_name, bvg_ingredients_data)
             self.machine_in_use -= 1
         else:
-            print("Request cannot be processed yet")
+            raise CoffeeMachineException("Request cannot be processed yet as no machine is available")
+
         return was_beverage_made
